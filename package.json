@@ -1,0 +1,53 @@
+{
+  "dependencies": {
+    "apollo-server-express": "^2.11.0",
+    "apollo-server-lambda": "^2.11.0",
+    "axios": "^0.19.2",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "global": "^4.4.0",
+    "graphql": "^14.6.0",
+    "graphql-type-json": "^0.3.1",
+    "mongoose": "^5.9.6",
+    "serverless-http": "^2.3.2",
+    "serverless-offline": "^6.1.2",
+    "serverless-webpack": "^5.3.1",
+    "validator": "^13.0.0",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11",
+    "webpack-node-externals": "^1.7.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/plugin-transform-runtime": "^7.9.0",
+    "@babel/preset-env": "^7.9.0",
+    "@babel/runtime": "^7.9.2",
+    "babel-loader": "^8.1.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-stage-2": "^6.24.1",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-import": "^2.20.2",
+    "graphql-playground-middleware-express": "^1.7.12"
+  },
+  "name": "graph-api-500-cidades-",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "webpack": "webpack",
+    "dev": "eslint . --fix && sls offline start --skipCacheInvalidation",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/midianinja/graph-api-500-cidades-.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/midianinja/graph-api-500-cidades-/issues"
+  },
+  "homepage": "https://github.com/midianinja/graph-api-500-cidades-#readme",
+  "description": ""
+}

@@ -1,0 +1,30 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo runing npm install...
+      - npm install
+
+      - echo runing npm install with only dev...
+      - npm install --only=dev
+
+      - echo installing serverless
+      - npm install -g serverless
+      
+      - echo installing webpack
+      - npm install -g webpack
+  build:
+    commands:
+      - echo runing webpack
+      - npm run webpack
+
+      - echo removing dev dependences
+      # - npm uninstall --only=dev
+
+      - echo making serverless deploy
+      - echo using environment $NODE_ENV
+      - sls deploy --stage $NODE_ENV | tee deploy.out
+  post_build:
+    commands:
+      - echo finished deploy
