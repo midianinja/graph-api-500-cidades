@@ -19,7 +19,7 @@ const fiveHundredCities = new Schema({
   },
   biography: { type: String, default: '' },
   skills: [{ type: String }],
-  email: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
   instagram: { type: String, default: '' },
   facebook: { type: String, default: '' },
   phone: { type: String, default: '' },
@@ -29,7 +29,7 @@ const fiveHundredCities = new Schema({
   genre: { type: String, default: '' },
   sexual_orientation: { type: String, default: '' },
   race: { type: String, default: '' },
-  address: { type: ObjectId, ref: 'address' },
+  address: { type: ObjectId, ref: 'adresses' },
 }, {
   timestamps: { updatedAt: 'updated_at', createdAt: 'created_at' },
 });

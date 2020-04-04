@@ -1,6 +1,6 @@
 import validator from 'validator';
 
-export default ({
+export const validateToUpdate = ({
   latitude, longitude,
 }) => {
   const errors = [];

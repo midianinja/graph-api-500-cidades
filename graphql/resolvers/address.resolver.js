@@ -1,4 +1,4 @@
-import AdressesController from '../../controllers/address.controller';
+import AdressesController from '../../controllers/address/address.controller';
 
 export default {
   queries: {

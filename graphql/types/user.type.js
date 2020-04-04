@@ -25,6 +25,8 @@ export default `
     id: String
     tipology: String
     name: String
+    profile_image: ImageInput
+    cover_image: ImageInput
     biography: String
     skills: String,
     email: String

@@ -13,7 +13,9 @@ const create = async (parent, args, { adresses }) => {
   if (validate.error) throw new Error(validate.msg);
 
   try {
-    return await adresses.create(args.address);
+    const addressPromise = await adresses.create(args.address);
+    addressPromise.id = addressPromise._id;
+    return addressPromise;
   } catch (err) {
     console.error('err:', err);
     throw err;
@@ -34,7 +36,9 @@ const update = async (parent, args, { adresses }) => {
 
   try {
     // Craete artist in the database
-    return await adresses.findOneAndUpdate({ _id: args.address_id }, args.address);
+    const addressPromise = await adresses.findOneAndUpdate({ _id: args.address_id }, args.address);
+    addressPromise.id = addressPromise._id;
+    return addressPromise;
   } catch (err) {
     console.error('err:', err);
     throw err;
@@ -49,7 +53,11 @@ const update = async (parent, args, { adresses }) => {
   * @param {object} args Informações enviadas na query ou mutation
   * @param {object} context Informações passadas no context para o apollo graphql
   */
-const findOne = (parent, args, { adresses }) => adresses.findOne(args.address).populate('address');
+const findOne = async (parent, args, { adresses }) => {
+  const addressPromise = await adresses.findOne(args.address).populate('address');
+  addressPromise.id = addressPromise._id;
+  return addressPromise;
+}
 
 /**
   * findAll - Essa função procura e retorna vários endereços da base de dados
@@ -59,7 +67,10 @@ const findOne = (parent, args, { adresses }) => adresses.findOne(args.address).p
   * @param {object} args Informações enviadas na query ou mutation
   * @param {object} context Informações passadas no context para o apollo graphql
   */
-const findAll = (parent, args, { adresses }) => adresses.find(args.address).populate('address');
+const findAll = async (parent, args, { adresses }) => {
+  const addressPromises = await adresses.find(args.address).populate('address');
+  return addressPromises.map(adr => ({ ...adr, id: adr._id }));
+}
 
 export default {
   create,

@@ -1,4 +1,4 @@
-import validateUser from './user.validator';
+import { validateToCreate, validateToUpdate } from './user.validator';
 import validateAddress from '../address/address.validator';
 
 /**
@@ -11,27 +11,30 @@ import validateAddress from '../address/address.validator';
   */
 const create = async (parent, args, { users, adresses }) => {
   try {
-    const validate = validateUser(args.user);
+    const validate = validateToCreate(args.user);
+    let myAddress = null;
     if (validate.error) throw new Error(validate.msg);
     if (args.user.address) {
       const validatedAddress = validateAddress(args.user.address);
       if (validatedAddress.error) throw new Error(validate.msg);
+      myAddress = await adresses.create(args.user.address);
+      console.log('myAddress:', myAddress);
     }
 
     const userKeys = Object.keys(args.user);
     const myUser = {};
     userKeys.forEach((key) => {
-      if (key === 'address') return;
-      myUser[key] = args.user[key];
+      console.log('key:', key);
+      if (key === 'address') myUser.address = myAddress._id;
+      else myUser[key] = args.user[key];
     });
 
     // Craete artist in the database
     const user = await users.create(myUser);
-    if (args.user.address) {
-      await adresses.create(args.user.address);
-    }
+
     const updatedUser = await users.findOne({ _id: user._id }).populate('address');
-    return { ...updatedUser, id: updatedUser._id };
+    updatedUser.id = updatedUser._id;
+    return updatedUser;
   } catch (err) {
     console.error('err:', err);
     throw err;
@@ -50,7 +53,7 @@ const update = async (parent, args, { adresses, users }) => {
   const validate = validateUser(args.user);
   if (validate.error) throw new Error(validate.msg);
   if (args.user.address) {
-    const validatedAddress = validateAddress(args.user.address);
+    const validatedAddress = validateToUpdate(args.user.address);
     if (validatedAddress.error) throw new Error(validate.msg);
   }
   const userKeys = Object.keys(args.user);
@@ -82,7 +85,15 @@ const update = async (parent, args, { adresses, users }) => {
   * @param {object} args Informações enviadas na query ou mutation
   * @param {object} context Informações passadas no context para o apollo graphql
   */
-const findOne = (parent, args, { users }) => users.findOne(args.user).populate('address');
+const findOne = async (parent, args, { users }) => {
+  let query = {};
+  if (args.user.id) query._id = args.user.id;
+  else query = args.user;
+
+  const user = await users.findOne(query).populate('address');
+  user.id = user._id;
+  return user;
+};
 
 /**
   * findAll - Essa função procura e retorna vários usuarios da base de dados
@@ -92,7 +103,10 @@ const findOne = (parent, args, { users }) => users.findOne(args.user).populate('
   * @param {object} args Informações enviadas na query ou mutation
   * @param {object} context Informações passadas no context para o apollo graphql
   */
-const findAll = (parent, args, { users }) => users.find(args.user).populate('address');
+const findAll = async (parent, args, { users }) => {
+  const users = await users.find(args.user).populate('address');
+  return users.map(usr => ({ ...usr, id: usr._id }));
+}
 
 export default {
   create,

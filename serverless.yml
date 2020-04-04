@@ -73,7 +73,7 @@ functions:
         path: /
         cors:
           origins:
-            - *
+            - '*'
           headers:
             - Content-Type
             - Access-Control-Allow-Origin
