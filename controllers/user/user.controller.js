@@ -104,8 +104,8 @@ const findOne = async (parent, args, { users }) => {
   * @param {object} context Informações passadas no context para o apollo graphql
   */
 const findAll = async (parent, args, { users }) => {
-  const users = await users.find(args.user).populate('address');
-  return users.map(usr => ({ ...usr, id: usr._id }));
+  const myUsers = await users.find(args.user).populate('address');
+  return myUsers.map(usr => ({ ...usr, id: usr._id }));
 }
 
 export default {
