@@ -7,7 +7,7 @@ export default `
     profile_image: Image
     cover_image: Image
     biography: String
-    skills: String,
+    skills: [String],
     email: String
     instagram: String
     facebook: String
@@ -28,7 +28,7 @@ export default `
     profile_image: ImageInput
     cover_image: ImageInput
     biography: String
-    skills: String,
+    skills: [String],
     email: String
     instagram: String
     facebook: String

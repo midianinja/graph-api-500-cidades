@@ -33,7 +33,7 @@ const server = new ApolloServer(
         event,
         context,
         adresses: conn.model('adresses'),
-        users: conn.model('fiveHundredCities'),
+        users: conn.model('users'),
       });
     },
   },

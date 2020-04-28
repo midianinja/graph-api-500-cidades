@@ -1,4 +1,4 @@
-import validateAddress from './address.validator';
+import { validateToCreate } from './address.validator';
 
 /**
   * create - Essa função cria um endereço na base de dados
@@ -8,12 +8,17 @@ import validateAddress from './address.validator';
   * @param {object} args Informações enviadas na query ou mutation
   * @param {object} context Informações passadas no context para o apollo graphql
   */
-const create = async (parent, args, { adresses }) => {
-  const validate = validateAddress(args.address);
+const create = async (parent, args, { adresses, users }) => {
+  const validate = validateToCreate(args.address);
   if (validate.error) throw new Error(validate.msg);
 
   try {
     const addressPromise = await adresses.create(args.address);
+    const userPromise = await users.findOneAndUpdate(
+      { _id: args.address.user },
+      { address: addressPromise._id },
+    );
+    console.log('userPromise:', userPromise);
     addressPromise.id = addressPromise._id;
     return addressPromise;
   } catch (err) {
@@ -31,7 +36,7 @@ const create = async (parent, args, { adresses }) => {
   * @param {object} context Informações passadas no context para o apollo graphql
   */
 const update = async (parent, args, { adresses }) => {
-  const validate = validateAddress(args.address);
+  const validate = validateToCreate(args.address);
   if (validate.error) throw new Error(validate.msg);
 
   try {
@@ -57,7 +62,7 @@ const findOne = async (parent, args, { adresses }) => {
   const addressPromise = await adresses.findOne(args.address).populate('address');
   addressPromise.id = addressPromise._id;
   return addressPromise;
-}
+};
 
 /**
   * findAll - Essa função procura e retorna vários endereços da base de dados
@@ -69,8 +74,8 @@ const findOne = async (parent, args, { adresses }) => {
   */
 const findAll = async (parent, args, { adresses }) => {
   const addressPromises = await adresses.find(args.address).populate('address');
-  return addressPromises.map(adr => ({ ...adr, id: adr._id }));
-}
+  return addressPromises.map((adr) => ({ ...adr.toJSON(), id: adr.toJSON()._id }));
+};
 
 export default {
   create,

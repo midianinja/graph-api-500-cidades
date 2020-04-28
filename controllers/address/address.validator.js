@@ -1,6 +1,6 @@
 import validator from 'validator';
 
-export const validateToUpdate = ({
+export const validateToCreate = ({
   latitude, longitude,
 }) => {
   const errors = [];
@@ -14,3 +14,5 @@ export const validateToUpdate = ({
     throw err;
   }
 };
+
+export const todelete = '';

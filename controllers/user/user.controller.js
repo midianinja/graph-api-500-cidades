@@ -1,5 +1,5 @@
 import { validateToCreate, validateToUpdate } from './user.validator';
-import validateAddress from '../address/address.validator';
+import { validateToCreate as validateAddress } from '../address/address.validator';
 
 /**
   * create - Essa função cria um usuario na base de dados
@@ -30,6 +30,7 @@ const create = async (parent, args, { users, adresses }) => {
     });
 
     // Craete artist in the database
+    console.log('myUser:', myUser);
     const user = await users.create(myUser);
 
     const updatedUser = await users.findOne({ _id: user._id }).populate('address');
@@ -50,10 +51,10 @@ const create = async (parent, args, { users, adresses }) => {
   * @param {object} context Informações passadas no context para o apollo graphql
   */
 const update = async (parent, args, { adresses, users }) => {
-  const validate = validateUser(args.user);
+  const validate = validateToUpdate(args.user);
   if (validate.error) throw new Error(validate.msg);
   if (args.user.address) {
-    const validatedAddress = validateToUpdate(args.user.address);
+    const validatedAddress = validateAddress(args.user.address);
     if (validatedAddress.error) throw new Error(validate.msg);
   }
   const userKeys = Object.keys(args.user);
@@ -105,12 +106,27 @@ const findOne = async (parent, args, { users }) => {
   */
 const findAll = async (parent, args, { users }) => {
   const myUsers = await users.find(args.user).populate('address');
-  return myUsers.map(usr => ({ ...usr, id: usr._id }));
-}
+  console.log('myUsers:', myUsers);
+  return myUsers.map((usr) => ({ ...usr.toJSON(), id: usr.toJSON()._id }));
+};
+
+/**
+  * search - Essa função procura e retorna vários usuarios da base de dados
+  *
+  * @function search
+  * @param {object} parent Informações de um possível pai
+  * @param {object} args Informações enviadas na query ou mutation
+  * @param {object} context Informações passadas no context para o apollo graphql
+  */
+const search = async (parent, args, { users }) => {
+  const myUsers = await users.find(args.user).populate('address');
+  return myUsers.map((usr) => ({ ...usr, id: usr._id }));
+};
 
 export default {
   create,
   findOne,
   findAll,
   update,
+  search,
 };

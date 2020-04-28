@@ -11,8 +11,9 @@ export default `
     country: String
     place_id: String
     geometry: JSON
-    latitude: Int
-    longitude: Int
+    latitude: Float
+    longitude: Float
+    user: User
   }
   
   input AddressInput {
@@ -27,7 +28,8 @@ export default `
     country: String
     place_id: String
     geometry: JSON
-    latitude: Int
-    longitude: Int
+    latitude: Float
+    longitude: Float
+    user: String
   }
 `;
