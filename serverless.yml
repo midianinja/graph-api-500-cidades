@@ -78,7 +78,7 @@ functions:
             - Content-Type
             - Access-Control-Allow-Origin
             - Origin
-            - Accept
+            - x-api-key
           allowCredentials: true
      - http:
         method: GET

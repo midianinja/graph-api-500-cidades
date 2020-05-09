@@ -19,6 +19,7 @@ export default `
     sexual_orientation: String
     race: String
     address: Address,
+    search_keys: [String]
   }
   
   input UserInput {

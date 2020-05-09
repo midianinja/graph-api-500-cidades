@@ -1,6 +1,33 @@
 import { validateToCreate, validateToUpdate } from './user.validator';
 import { validateToCreate as validateAddress } from '../address/address.validator';
 
+const normalizeStr = (str) => str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+
+const getSearchKeys = (user) => {
+  let keys = [];
+
+  user.skills.forEach((s) => { keys = [...keys, ...s.split(' ').map((e) => normalizeStr(e))]; });
+
+  if (user.job) keys = [...keys, ...user.job.split(' ').map((e) => normalizeStr(e))];
+  if (user.name) keys = [...keys, ...user.name.split(' ').map((e) => normalizeStr(e))];
+  if (user.email) keys.push(user.email.toUpperCase());
+  if (user.phone) keys.push(user.phone.toUpperCase());
+  if (user.instagram) keys.push(user.instagram.toUpperCase());
+  if (user.facebook) keys.push(user.facebook.toUpperCase());
+  if (user.site_address) keys.push(user.site_address.toUpperCase());
+  if (user.genre) keys = [...keys, ...user.genre.split(' ').map((e) => normalizeStr(e))];
+  if (user.race) keys = [...keys, ...user.race.split(' ').map((e) => normalizeStr(e))];
+  if (user.sexual_orientation) keys = [...keys, ...user.sexual_orientation.split(' ').map((e) => normalizeStr(e))];
+  if (user.cep) keys.push(user.cep.toUpperCase());
+  if (user.address) {
+    if (user.address.bairro) keys = [...keys, ...user.address.bairro.split(' ').map((e) => normalizeStr(e))];
+    if (user.address.municipio) keys = [...keys, ...user.address.municipio.split(' ').map((e) => normalizeStr(e))];
+    if (user.address.estado) keys = [...keys, ...user.address.estado.split(' ').map((e) => normalizeStr(e))];
+    if (user.address.pais) keys = [...keys, ...user.address.pais.split(' ').map((e) => normalizeStr(e))];
+  }
+  return keys;
+};
+
 /**
   * create - Essa função cria um usuario na base de dados
   *
@@ -18,19 +45,18 @@ const create = async (parent, args, { users, adresses }) => {
       const validatedAddress = validateAddress(args.user.address);
       if (validatedAddress.error) throw new Error(validate.msg);
       myAddress = await adresses.create(args.user.address);
-      console.log('myAddress:', myAddress);
     }
 
     const userKeys = Object.keys(args.user);
     const myUser = {};
     userKeys.forEach((key) => {
-      console.log('key:', key);
       if (key === 'address') myUser.address = myAddress._id;
       else myUser[key] = args.user[key];
     });
 
+    myUser.search_keys = getSearchKeys(args.user);
+
     // Craete artist in the database
-    console.log('myUser:', myUser);
     const user = await users.create(myUser);
 
     const updatedUser = await users.findOne({ _id: user._id }).populate('address');
@@ -106,7 +132,6 @@ const findOne = async (parent, args, { users }) => {
   */
 const findAll = async (parent, args, { users }) => {
   const myUsers = await users.find(args.user).populate('address');
-  console.log('myUsers:', myUsers);
   return myUsers.map((usr) => ({ ...usr.toJSON(), id: usr.toJSON()._id }));
 };
 
@@ -119,8 +144,35 @@ const findAll = async (parent, args, { users }) => {
   * @param {object} context Informações passadas no context para o apollo graphql
   */
 const search = async (parent, args, { users }) => {
-  const myUsers = await users.find(args.user).populate('address');
-  return myUsers.map((usr) => ({ ...usr, id: usr._id }));
+  const myUsers = await users.find(
+    {
+      search_keys: {
+        $in: args.key_word.split(' ').map((str) => new RegExp(normalizeStr(str), 'g')),
+      },
+    },
+  ).populate('address');
+  return myUsers.map((usr) => ({ ...usr.toJSON(), id: usr.toJSON()._id }));
+};
+
+/**
+  * search - Essa função procura e retorna vários usuarios da base de dados
+  *
+  * @function search
+  * @param {object} parent Informações de um possível pai
+  * @param {object} args Informações enviadas na query ou mutation
+  * @param {object} context Informações passadas no context para o apollo graphql
+  */
+const populateSearchKeys = async (parent, args, { users }) => {
+  const myUsers = await users.find().populate('address');
+  const promises = myUsers.map((usr) => new Promise((res, rej) => {
+    const searchKeys = getSearchKeys(usr);
+    users.findOneAndUpdate({ _id: usr._id }, { search_keys: searchKeys })
+      .then((user) => {
+        res(user);
+      })
+      .catch((err) => rej(err));
+  }));
+  return Promise.all(promises);
 };
 
 export default {
@@ -129,4 +181,5 @@ export default {
   findAll,
   update,
   search,
+  populateSearchKeys,
 };

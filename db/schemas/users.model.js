@@ -25,7 +25,7 @@ const fiveHundredCities = new Schema({
   phone: { type: String, default: '' },
   job: { type: String, default: '' },
   site_address: { type: String, default: '' },
-  birth_date: { type: Date },
+  search_keys: [{ type: String }],
   genre: { type: String, default: '' },
   sexual_orientation: { type: String, default: '' },
   race: { type: String, default: '' },

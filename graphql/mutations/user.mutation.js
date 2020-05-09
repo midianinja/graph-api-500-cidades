@@ -7,4 +7,6 @@ export default `
     user_id: ID!
     user: UserInput!
   ): User
+
+  populateUserSearchKeys: [User]
 `;
