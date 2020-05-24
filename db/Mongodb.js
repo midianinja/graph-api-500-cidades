@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 
 import adresses from './schemas/adresses.model';
 import users from './schemas/users.model';
+import newsLetter from './schemas/newsLetter.model';
 
 
 export default async ({ conn, mongoUrl = 'mongodb://localhost/500-cities' }) => {
@@ -18,6 +19,7 @@ export default async ({ conn, mongoUrl = 'mongodb://localhost/500-cities' }) => 
       });
       newConnection.model('adresses', adresses);
       newConnection.model('users', users);
+      newConnection.model('news-letter', newsLetter);
       return newConnection;
     }
     console.log('=> using existing database connection');

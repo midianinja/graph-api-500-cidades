@@ -5,6 +5,7 @@ const { ObjectId } = Schema.Types;
 ObjectId.prototype.valueOf = () => this.toString();
 
 const fiveHundredCities = new Schema({
+  ida_id: { type: String, unique: true, sparse: true },
   tipology: { type: String, default: '' },
   name: { type: String, required: true },
   profile_image: {

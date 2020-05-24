@@ -20,6 +20,7 @@ export default `
     race: String
     address: Address,
     search_keys: [String]
+    ida_id: String
   }
   
   input UserInput {
@@ -40,6 +41,7 @@ export default `
     genre: String
     sexual_orientation: String
     race: String
-    address: AddressInput,
+    address: AddressInput
+    ida_id: String
   }
 `;
