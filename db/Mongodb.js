@@ -16,7 +16,13 @@ export default async ({ conn, mongoUrl = 'mongodb://localhost/500-cities' }) => 
         bufferCommands: false,
         bufferMaxEntries: 0,
         keepAlive: true,
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
       });
+      newConnection.set('useNewUrlParser', true);
+      newConnection.set('useFindAndModify', false);
+      newConnection.set('useCreateIndex', true);
+      
       newConnection.model('adresses', adresses);
       newConnection.model('users', users);
       newConnection.model('news-letter', newsLetter);

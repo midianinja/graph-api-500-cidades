@@ -19,7 +19,6 @@ const locationModel = new Schema({
   longitude: { type: Number, required: true },
   user: { type: ObjectId, ref: 'user' },
 }, {
-  usePushEach: true,
   timestamps: { updatedAt: 'updated_at', createdAt: 'created_at' },
 });
 

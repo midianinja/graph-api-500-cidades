@@ -9,10 +9,13 @@ import { validateToCreate } from './newsLetter.validator';
   * @param {object} context Informações passadas no context para o apollo graphql
   */
 const create = async (parent, args, { newsLetter }) => {
+console.log('🚀 ~ file: newsLetter.controller.js ~ line 12 ~ create ~ args', JSON.stringify(args));
   try {
     const validate = validateToCreate(args.user);
+    console.log('🚀 ~ file: newsLetter.controller.js ~ line 15 ~ create ~ validate', JSON.stringify(validate));
     if (validate.error) throw new Error(validate.msg);
     const user = await newsLetter.create(args.user);
+    console.log('🚀 ~ file: newsLetter.controller.js ~ line 18 ~ create ~ user', JSON.stringify(user));
     user.id = user._id;
     return user;
   } catch (err) {
